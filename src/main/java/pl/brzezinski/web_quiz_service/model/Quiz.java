@@ -1,5 +1,7 @@
 package pl.brzezinski.web_quiz_service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Arrays;
 
 public class Quiz {
@@ -8,6 +10,7 @@ public class Quiz {
     private String title;
     private String text;
     private String[] options;
+    @JsonIgnore
     private int answer;
 
     public Quiz() {
