@@ -57,8 +57,6 @@ public class QuizController {
         Quiz quizToSolve;
         if (isQuizExists(quizId)) {
             quizToSolve = quizList.get(Integer.parseInt(quizId) - 1);
-            System.out.println("CORRECT ANSER = " + quizToSolve.getAnswer());
-            System.out.println("ANSWER ID = " + answerId);
             if (quizToSolve.getAnswer() == answerId) {
                 answer = new Answer(true, "Congratulations, you're right!");
             } else {

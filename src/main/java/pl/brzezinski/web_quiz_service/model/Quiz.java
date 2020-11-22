@@ -1,6 +1,7 @@
 package pl.brzezinski.web_quiz_service.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Arrays;
 
@@ -10,7 +11,7 @@ public class Quiz {
     private String title;
     private String text;
     private String[] options;
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private int answer;
 
     public Quiz() {
