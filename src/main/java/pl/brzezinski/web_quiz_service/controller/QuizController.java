@@ -21,13 +21,12 @@ public class QuizController {
 
     @GetMapping(path = "/api/quizzes/{id}")
     public Quiz getQuizById(@PathVariable String id) {
-        Quiz quiz = quizList.get(Integer.parseInt(id));
-        if (quiz == null || quizList.isEmpty()) {
+        if (!isQuizExists(id)) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "(Not found)"
             );
         } else {
-            return quizList.get(Integer.parseInt(id + 1));
+            return quizList.get(Integer.parseInt(id) - 1);
         }
     }
 
@@ -46,18 +45,39 @@ public class QuizController {
 
     @PostMapping(path = "/api/quizzes", consumes = "application/json")
     public Quiz createNewQuiz(@RequestBody Quiz newQuiz) {
-        newQuiz.setId(NUMBER_OF_QUIZZES + 1);
         NUMBER_OF_QUIZZES++;
+        newQuiz.setId(NUMBER_OF_QUIZZES);
         quizList.add(newQuiz);
         return newQuiz;
     }
 
-    @PostMapping(path = "/api/quiz")
-    public Answer getAnswer(@RequestParam(name = "answer") int answer) {
-        if (answer == 2) {
-            return new Answer(true, "Congratulations, you're right!");
+    @PostMapping(path = "/api/quizzes/{quizId}/solve")
+    public Answer solveQuiz(@RequestParam(name = "answer") int answerId, @PathVariable String quizId) {
+        Answer answer;
+        Quiz quizToSolve;
+        if (isQuizExists(quizId)) {
+            quizToSolve = quizList.get(Integer.parseInt(quizId) - 1);
+            System.out.println("CORRECT ANSER = " + quizToSolve.getAnswer());
+            System.out.println("ANSWER ID = " + answerId);
+            if (quizToSolve.getAnswer() == answerId) {
+                answer = new Answer(true, "Congratulations, you're right!");
+            } else {
+                answer = new Answer(false, "Wrong answer! Please, try again.");
+            }
         } else {
-            return new Answer(false, "Wrong answer! Please, try again.");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "(Not found)"
+            );
+        }
+        return answer;
+    }
+
+    private boolean isQuizExists(String id) {
+        id = Integer.parseInt(id) <= quizList.size() ? id : null;
+        if (id == null) {
+            return false;
+        } else {
+            return true;
         }
     }
 }
