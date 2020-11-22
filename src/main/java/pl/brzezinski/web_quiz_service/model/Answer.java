@@ -1,31 +1,32 @@
 package pl.brzezinski.web_quiz_service.model;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class Answer {
 
-    private boolean success;
-    private String feedback;
+    private int[] answer;
 
     public Answer() {
     }
 
-    public Answer(boolean success, String feedback) {
-        this.success = success;
-        this.feedback = feedback;
+    public int[] getAnswer() {
+        int[] x = null;
+        if (Objects.equals(x, answer)) {
+            int[] ints = new int[0];
+            return ints;
+        }
+        return answer;
     }
 
-    public boolean isSuccess() {
-        return success;
+    public void setAnswer(int[] answer) {
+        this.answer = answer;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public String getFeedback() {
-        return feedback;
-    }
-
-    public void setFeedback(String feedback) {
-        this.feedback = feedback;
+    @Override
+    public String toString() {
+        return "Answers{" +
+                "answers=" + Arrays.toString(answer) +
+                '}';
     }
 }

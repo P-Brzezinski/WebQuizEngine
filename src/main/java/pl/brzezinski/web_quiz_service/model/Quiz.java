@@ -2,21 +2,30 @@ package pl.brzezinski.web_quiz_service.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Quiz {
 
     private int id;
+    @NotBlank
     private String title;
+    @NotBlank
     private String text;
+    @Size(min = 2)
+    @NotEmpty
     private String[] options;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private int answer;
+    private int[] answer;
 
     public Quiz() {
     }
 
-    public Quiz(String title, String text, String[] options, int answer) {
+    public Quiz(@NotBlank String title, @NotBlank String text, @Size(min = 2) String[] options, int[] answer) {
+        this.id = id;
         this.title = title;
         this.text = text;
         this.options = options;
@@ -55,11 +64,17 @@ public class Quiz {
         this.options = options;
     }
 
-    public int getAnswer() {
+    public int[] getAnswer() {
+        int[] x = null;
+        if (Objects.equals(x, answer)) {
+            int[] ints = new int[0];
+            return ints;
+        }
         return answer;
     }
 
-    public void setAnswer(int answer) {
+    public void setAnswer(int[] answer) {
+        Arrays.sort(answer);
         this.answer = answer;
     }
 
@@ -70,7 +85,7 @@ public class Quiz {
                 ", title='" + title + '\'' +
                 ", text='" + text + '\'' +
                 ", options=" + Arrays.toString(options) +
-                ", answer=" + answer +
+                ", answers=" + Arrays.toString(answer) +
                 '}';
     }
 }

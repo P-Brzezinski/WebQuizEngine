@@ -4,8 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pl.brzezinski.web_quiz_service.model.Answer;
+import pl.brzezinski.web_quiz_service.model.Feedback;
 import pl.brzezinski.web_quiz_service.model.Quiz;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @RestController
@@ -16,6 +18,14 @@ public class QuizController {
     List<Quiz> quizList = new ArrayList<>();
 
     public QuizController() {
+    }
+
+    @PostMapping(path = "/api/quizzes", consumes = "application/json")
+    public Quiz createNewQuiz(@Valid @RequestBody Quiz newQuiz) {
+        NUMBER_OF_QUIZZES++;
+        newQuiz.setId(NUMBER_OF_QUIZZES);
+        quizList.add(newQuiz);
+        return newQuiz;
     }
 
     @GetMapping(path = "/api/quizzes/{id}")
@@ -42,31 +52,27 @@ public class QuizController {
         }
     }
 
-    @PostMapping(path = "/api/quizzes", consumes = "application/json")
-    public Quiz createNewQuiz(@RequestBody Quiz newQuiz) {
-        NUMBER_OF_QUIZZES++;
-        newQuiz.setId(NUMBER_OF_QUIZZES);
-        quizList.add(newQuiz);
-        return newQuiz;
-    }
-
     @PostMapping(path = "/api/quizzes/{quizId}/solve")
-    public Answer solveQuiz(@RequestParam(name = "answer") int num, @PathVariable int quizId) {
-        Answer answer;
+    public Feedback solveQuiz(@RequestBody Answer answer, @PathVariable int quizId) {
+        Feedback feedback;
         Quiz quizToSolve;
+
+        int[] allAnswers = answer.getAnswer();
+        Arrays.sort(allAnswers);
+
         if (isQuizExists(quizId)) {
             quizToSolve = quizList.get(quizId - 1);
-            if (quizToSolve.getAnswer() == num) {
-                answer = new Answer(true, "Congratulations, you're right!");
+            if (Arrays.equals(quizToSolve.getAnswer(), allAnswers)) {
+                feedback = new Feedback(true, "Congratulations, you're right!");
             } else {
-                answer = new Answer(false, "Wrong answer! Please, try again.");
+                feedback = new Feedback(false, "Wrong answer! Please, try again.");
             }
         } else {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "(Not found)"
             );
         }
-        return answer;
+        return feedback;
     }
 
     private boolean isQuizExists(int id) {
