@@ -1,6 +1,5 @@
 package pl.brzezinski.web_quiz_service.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Arrays;

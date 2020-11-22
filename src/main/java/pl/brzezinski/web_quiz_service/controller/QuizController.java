@@ -6,7 +6,6 @@ import org.springframework.web.server.ResponseStatusException;
 import pl.brzezinski.web_quiz_service.model.Answer;
 import pl.brzezinski.web_quiz_service.model.Quiz;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 @RestController
@@ -20,13 +19,13 @@ public class QuizController {
     }
 
     @GetMapping(path = "/api/quizzes/{id}")
-    public Quiz getQuizById(@PathVariable String id) {
+    public Quiz getQuizById(@PathVariable int id) {
         if (!isQuizExists(id)) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "(Not found)"
             );
         } else {
-            return quizList.get(Integer.parseInt(id) - 1);
+            return quizList.get(id - 1);
         }
     }
 
@@ -52,12 +51,12 @@ public class QuizController {
     }
 
     @PostMapping(path = "/api/quizzes/{quizId}/solve")
-    public Answer solveQuiz(@RequestParam(name = "answer") int answerId, @PathVariable String quizId) {
+    public Answer solveQuiz(@RequestParam(name = "answer") int num, @PathVariable int quizId) {
         Answer answer;
         Quiz quizToSolve;
         if (isQuizExists(quizId)) {
-            quizToSolve = quizList.get(Integer.parseInt(quizId) - 1);
-            if (quizToSolve.getAnswer() == answerId) {
+            quizToSolve = quizList.get(quizId - 1);
+            if (quizToSolve.getAnswer() == num) {
                 answer = new Answer(true, "Congratulations, you're right!");
             } else {
                 answer = new Answer(false, "Wrong answer! Please, try again.");
@@ -70,12 +69,8 @@ public class QuizController {
         return answer;
     }
 
-    private boolean isQuizExists(String id) {
-        id = Integer.parseInt(id) <= quizList.size() ? id : null;
-        if (id == null) {
-            return false;
-        } else {
-            return true;
-        }
+    private boolean isQuizExists(int id) {
+        id = id <= quizList.size() ? id : 0;
+        return id != 0;
     }
 }
