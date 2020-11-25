@@ -1,0 +1,4 @@
+2020-11-25 22:34:19 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Błąd składniowy w wyrażeniu SQL "QUIZ_ID[*]"
+Syntax error in SQL statement "QUIZ_ID[*]"; SQL statement:
+QUIZ_ID [42000-200]
