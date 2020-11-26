@@ -7,4 +7,6 @@ import pl.brzezinski.web_quiz_service.model.Quiz;
 @Repository
 public interface QuizRepository extends CrudRepository<Quiz, Long> {
 
+    Quiz findById(long id);
+
 }

@@ -15,9 +15,6 @@ import java.util.*;
 @RestController
 public class QuizController {
 
-    public static int NUMBER_OF_QUIZZES = 0;
-
-    List<Quiz> quizList = new ArrayList<>();
     private QuizRepository quizRepository;
 
     @Autowired
@@ -27,9 +24,6 @@ public class QuizController {
 
     @PostMapping(path = "/api/quizzes", consumes = "application/json")
     public Quiz createNewQuiz(@Valid @RequestBody Quiz newQuiz) {
-        NUMBER_OF_QUIZZES++;
-//        newQuiz.setId(NUMBER_OF_QUIZZES);
-//        quizList.add(newQuiz);
         quizRepository.save(newQuiz);
         return newQuiz;
     }
@@ -41,16 +35,16 @@ public class QuizController {
                     HttpStatus.NOT_FOUND, "(Not found)"
             );
         } else {
-            return quizList.get(id - 1);
+            return quizRepository.findById(id);
         }
     }
 
     @GetMapping(path = "/api/quizzes")
     public Quiz[] getAllQuizzes() {
         List<Quiz> quizzesFromDB = (List<Quiz>) quizRepository.findAll();
-        if (quizzesFromDB.isEmpty()){
+        if (quizzesFromDB.isEmpty()) {
             return new Quiz[0];
-        }else {
+        } else {
             Quiz[] quizzes = new Quiz[quizzesFromDB.size()];
             for (int i = 0; i < quizzes.length; i++) {
                 quizzes[i] = quizzesFromDB.get(i);
@@ -59,16 +53,16 @@ public class QuizController {
         }
     }
 
-    @PostMapping(path = "/api/quizzes/{quizId}/solve")
-    public Feedback solveQuiz(@RequestBody Answer answer, @PathVariable int quizId) {
+    @PostMapping(path = "/api/quizzes/{id}/solve")
+    public Feedback solveQuiz(@RequestBody Answer userInput, @PathVariable int id) {
         Feedback feedback;
         Quiz quizToSolve;
 
-        List<Integer> allAnswers = answer.getAnswer();
+        List<Integer> allAnswers = userInput.getAnswer();
 
-        if (isQuizExists(quizId)) {
-            quizToSolve = quizList.get(quizId - 1);
-            if (quizToSolve.getAnswer().equals(allAnswers)) {
+        if (isQuizExists(id)) {
+            quizToSolve = quizRepository.findById(id);
+            if (allAnswers.equals(quizToSolve.getAnswer())) {
                 feedback = new Feedback(true, "Congratulations, you're right!");
             } else {
                 feedback = new Feedback(false, "Wrong answer! Please, try again.");
@@ -82,7 +76,7 @@ public class QuizController {
     }
 
     private boolean isQuizExists(int id) {
-        id = id <= quizList.size() ? id : 0;
-        return id != 0;
+        Quiz quiz = quizRepository.findById(id);
+        return quiz != null;
     }
 }
