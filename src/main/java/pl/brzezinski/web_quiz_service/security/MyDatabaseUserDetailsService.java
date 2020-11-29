@@ -1,13 +1,10 @@
 package pl.brzezinski.web_quiz_service.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.server.ResponseStatusException;
 import pl.brzezinski.web_quiz_service.db.UserRepository;
 import pl.brzezinski.web_quiz_service.model.User;
 

@@ -2,7 +2,7 @@ package pl.brzezinski.web_quiz_service.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -11,9 +11,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Email
     private String name;
-    //    @Email
-//    @Min(5)
+    @Size(min = 5)
     private String password;
 
     public User() {

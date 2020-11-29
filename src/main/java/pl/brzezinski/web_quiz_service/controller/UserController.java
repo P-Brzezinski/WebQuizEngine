@@ -1,11 +1,13 @@
 package pl.brzezinski.web_quiz_service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import pl.brzezinski.web_quiz_service.db.UserRepository;
 import pl.brzezinski.web_quiz_service.model.User;
 
@@ -26,8 +28,12 @@ public class UserController {
 
     @PostMapping(path = "/api/register", consumes = "application/json")
     public void registerNewUser(@Valid @RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        if (userRepository.findByName(user.getName()) == null){ //user does not exists yet
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);
+        }else { // username exists
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists");
+        }
     }
 
     @GetMapping(path = "/api/users")
