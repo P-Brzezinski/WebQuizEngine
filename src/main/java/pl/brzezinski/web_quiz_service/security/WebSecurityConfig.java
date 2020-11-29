@@ -24,6 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .and()
+                .csrf().disable()
                 .httpBasic();
     }
 

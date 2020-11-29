@@ -1,11 +1,17 @@
 package pl.brzezinski.web_quiz_service.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.server.ResponseStatusException;
 import pl.brzezinski.web_quiz_service.db.UserRepository;
 import pl.brzezinski.web_quiz_service.model.User;
+
+import java.util.Arrays;
 
 public class MyDatabaseUserDetailsService implements UserDetailsService {
 
@@ -15,7 +21,10 @@ public class MyDatabaseUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User byName = userRepository.findByName(username);
-        System.out.println(byName);
-        return (UserDetails) byName;
+        if (byName == null) {
+            throw new UsernameNotFoundException("Not found");
+        } else {
+            return new org.springframework.security.core.userdetails.User(byName.getName(), byName.getPassword(), Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
+        }
     }
 }
