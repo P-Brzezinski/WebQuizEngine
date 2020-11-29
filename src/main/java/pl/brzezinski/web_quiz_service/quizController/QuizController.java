@@ -1,4 +1,4 @@
-package pl.brzezinski.web_quiz_service.controller;
+package pl.brzezinski.web_quiz_service.quizController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
