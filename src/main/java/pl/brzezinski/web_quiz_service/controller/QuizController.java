@@ -30,7 +30,7 @@ public class QuizController {
 
     @GetMapping(path = "/api/quizzes/{id}")
     public Quiz getQuizById(@PathVariable int id) {
-        if (!isQuizExists(id)) {
+        if (searchForQuiz(id) == null) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "(Not found)"
             );
@@ -56,11 +56,11 @@ public class QuizController {
     @PostMapping(path = "/api/quizzes/{id}/solve")
     public Feedback solveQuiz(@RequestBody Answer userInput, @PathVariable int id) {
         Feedback feedback;
-        Quiz quizToSolve;
+        Quiz quizToSolve = searchForQuiz(id);
 
         List<Integer> allAnswers = userInput.getAnswer();
 
-        if (isQuizExists(id)) {
+        if (quizToSolve != null) {
             quizToSolve = quizRepository.findById(id);
             if (allAnswers.equals(quizToSolve.getAnswer())) {
                 feedback = new Feedback(true, "Congratulations, you're right!");
@@ -75,8 +75,23 @@ public class QuizController {
         return feedback;
     }
 
-    private boolean isQuizExists(int id) {
-        Quiz quiz = quizRepository.findById(id);
-        return quiz != null;
+
+    @DeleteMapping(path = "/api/quizzes/{id}")
+    public void deleteQuiz(@PathVariable("id") int id) {
+        Quiz quiz = searchForQuiz(id);
+        if (quiz != null) {
+            quizRepository.delete(quiz);
+            throw new ResponseStatusException(
+                    HttpStatus.NO_CONTENT, "(No content)"
+            );
+        } else {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "(Not found)"
+            );
+        }
+    }
+
+    private Quiz searchForQuiz(int id) {
+        return quizRepository.findById(id);
     }
 }
