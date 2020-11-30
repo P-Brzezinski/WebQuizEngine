@@ -31,6 +31,8 @@ public class Quiz {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Integer> answer;
 
+    private String owner;
+
     public Quiz() {
     }
 
@@ -78,5 +80,13 @@ public class Quiz {
     public void setAnswer(List<Integer> answer) {
         Collections.sort(answer);
         this.answer = answer;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

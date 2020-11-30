@@ -10,6 +10,7 @@ import pl.brzezinski.web_quiz_service.model.Feedback;
 import pl.brzezinski.web_quiz_service.model.Quiz;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.*;
 
 @RestController
@@ -23,7 +24,9 @@ public class QuizController {
     }
 
     @PostMapping(path = "/api/quizzes", consumes = "application/json")
-    public Quiz createNewQuiz(@Valid @RequestBody Quiz newQuiz) {
+    public Quiz createNewQuiz(@Valid @RequestBody Quiz newQuiz, Principal principal) {
+        String name = principal.getName();
+        newQuiz.setOwner(name);
         quizRepository.save(newQuiz);
         return newQuiz;
     }
@@ -77,16 +80,19 @@ public class QuizController {
 
 
     @DeleteMapping(path = "/api/quizzes/{id}")
-    public void deleteQuiz(@PathVariable("id") int id) {
+    public void deleteQuiz(@PathVariable("id") int id, Principal principal) {
         Quiz quiz = searchForQuiz(id);
-        if (quiz != null) {
+
+        if (quiz == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "(Not found)");
+        } else if (!Objects.equals(quiz.getOwner(), principal.getName())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "(Forbidden)");
+        } else {
             quizRepository.delete(quiz);
             throw new ResponseStatusException(
                     HttpStatus.NO_CONTENT, "(No content)"
-            );
-        } else {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "(Not found)"
             );
         }
     }
