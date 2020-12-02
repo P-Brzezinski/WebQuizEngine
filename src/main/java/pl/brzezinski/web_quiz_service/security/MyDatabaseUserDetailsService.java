@@ -17,11 +17,11 @@ public class MyDatabaseUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User byName = userRepository.findByName(username);
+        User byName = userRepository.findByEmail(username);
         if (byName == null) {
             throw new UsernameNotFoundException("Not found");
         } else {
-            return new org.springframework.security.core.userdetails.User(byName.getName(), byName.getPassword(), Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
+            return new org.springframework.security.core.userdetails.User(byName.getEmail(), byName.getPassword(), Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
         }
     }
 }

@@ -13,11 +13,13 @@ import java.util.*;
 public class Quiz {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotBlank
+
+    @NotBlank(message = "Title is required")
     private String title;
-    @NotBlank
+
+    @NotBlank(message = "Text is required")
     private String text;
 
     @ElementCollection
@@ -31,7 +33,10 @@ public class Quiz {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Integer> answer;
 
-    private String owner;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Quiz() {
     }
@@ -82,11 +87,11 @@ public class Quiz {
         this.answer = answer;
     }
 
-    public String getOwner() {
-        return owner;
+    public User getUser() {
+        return user;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setUser(User owner) {
+        this.user = owner;
     }
 }
