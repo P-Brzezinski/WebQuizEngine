@@ -22,6 +22,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/api/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/actuator/shutdown").permitAll()
+                .antMatchers(HttpMethod.GET,"/h2").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
