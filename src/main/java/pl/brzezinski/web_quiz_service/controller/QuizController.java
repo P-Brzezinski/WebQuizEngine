@@ -1,8 +1,6 @@
 package pl.brzezinski.web_quiz_service.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pl.brzezinski.web_quiz_service.db.QuizRepository;
@@ -11,6 +9,7 @@ import pl.brzezinski.web_quiz_service.model.Answer;
 import pl.brzezinski.web_quiz_service.model.Feedback;
 import pl.brzezinski.web_quiz_service.model.Quiz;
 import pl.brzezinski.web_quiz_service.model.User;
+import pl.brzezinski.web_quiz_service.service.QuizService;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -20,10 +19,12 @@ import java.util.*;
 @RequestMapping("/api")
 public class QuizController {
 
+    private QuizService quizService;
     private QuizRepository quizRepository;
     private UserRepository userRepository;
 
-    public QuizController(QuizRepository quizRepository, UserRepository userRepository) {
+    public QuizController(QuizService quizService, QuizRepository quizRepository, UserRepository userRepository) {
+        this.quizService = quizService;
         this.quizRepository = quizRepository;
         this.userRepository = userRepository;
     }
@@ -48,8 +49,11 @@ public class QuizController {
     }
 
     @GetMapping(path = "quizzes")
-    public Iterable<Quiz> findAll(){
-        return quizRepository.findAll();
+    public Iterable<Quiz> getAllQuizzes(
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "id") String sortBy){
+        return quizService.getAllQuizzes(pageNo, pageSize, sortBy);
     }
 
     @PostMapping(path = "quizzes/{id}/solve")
