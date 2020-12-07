@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pl.brzezinski.web_quiz_service.db.QuizRepository;
+import pl.brzezinski.web_quiz_service.db.UserRepository;
 import pl.brzezinski.web_quiz_service.model.Answer;
 import pl.brzezinski.web_quiz_service.model.Feedback;
 import pl.brzezinski.web_quiz_service.model.Quiz;
@@ -20,14 +21,16 @@ import java.util.*;
 public class QuizController {
 
     private QuizRepository quizRepository;
+    private UserRepository userRepository;
 
-    @Autowired
-    public QuizController(QuizRepository quizRepository) {
+    public QuizController(QuizRepository quizRepository, UserRepository userRepository) {
         this.quizRepository = quizRepository;
+        this.userRepository = userRepository;
     }
 
     @PostMapping(path = "quizzes", consumes = "application/json")
-    public Quiz createNewQuiz(@Valid @RequestBody Quiz newQuiz, @AuthenticationPrincipal User user) {
+    public Quiz createNewQuiz(@Valid @RequestBody Quiz newQuiz, Principal principal) {
+        User user = userRepository.findByEmail(principal.getName());
         newQuiz.setUser(user);
         quizRepository.save(newQuiz);
         return newQuiz;
@@ -45,17 +48,8 @@ public class QuizController {
     }
 
     @GetMapping(path = "quizzes")
-    public Quiz[] getAllQuizzes() {
-        List<Quiz> quizzesFromDB = (List<Quiz>) quizRepository.findAll();
-        if (quizzesFromDB.isEmpty()) {
-            return new Quiz[0];
-        } else {
-            Quiz[] quizzes = new Quiz[quizzesFromDB.size()];
-            for (int i = 0; i < quizzes.length; i++) {
-                quizzes[i] = quizzesFromDB.get(i);
-            }
-            return quizzes;
-        }
+    public Iterable<Quiz> findAll(){
+        return quizRepository.findAll();
     }
 
     @PostMapping(path = "quizzes/{id}/solve")
@@ -88,7 +82,7 @@ public class QuizController {
         if (quiz == null) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "(Not found)");
-        } else if (!Objects.equals(quiz.getUser(), principal.getName())) {
+        } else if (!Objects.equals(quiz.getUser().getEmail(), principal.getName())) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN, "(Forbidden)");
         } else {

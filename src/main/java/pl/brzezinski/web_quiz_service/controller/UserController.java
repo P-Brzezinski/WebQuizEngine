@@ -35,16 +35,7 @@ public class UserController {
     }
 
     @GetMapping(path = "users")
-    public User[] getAllUsers() {
-        List<User> all = (List<User>) userRepository.findAll();
-        if (all.isEmpty()) {
-            return new User[0];
-        } else {
-            User[] allUsers = new User[all.size()];
-            for (int i = 0; i < allUsers.length; i++) {
-                allUsers[i] = all.get(i);
-            }
-            return allUsers;
-        }
+    public Iterable<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
