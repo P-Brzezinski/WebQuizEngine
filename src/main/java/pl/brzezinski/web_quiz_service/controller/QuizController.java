@@ -6,6 +6,7 @@ import org.springframework.web.server.ResponseStatusException;
 import pl.brzezinski.web_quiz_service.model.Answer;
 import pl.brzezinski.web_quiz_service.model.Feedback;
 import pl.brzezinski.web_quiz_service.model.Quiz;
+import pl.brzezinski.web_quiz_service.model.User;
 import pl.brzezinski.web_quiz_service.service.QuizService;
 
 import javax.validation.Valid;
@@ -44,6 +45,12 @@ public class QuizController {
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(defaultValue = "id") String sortBy) {
         return quizService.getAllQuizzes(pageNo, pageSize, sortBy);
+    }
+
+    @GetMapping(path = "quizzes/completed")
+    public void getAllCompletedQuizzes(Principal principal){
+//        User user =
+
     }
 
     @PostMapping(path = "quizzes/{id}/solve")
