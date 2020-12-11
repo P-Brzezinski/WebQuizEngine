@@ -5,17 +5,17 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "completed_quizzes")
-public class CompletedQuizzes {
+public class CompletedQuizz {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
     private Long quizId;
+    private String userName;
     private LocalDateTime completedAt;
     private boolean isCorrect;
 
-    public CompletedQuizzes() {
+    public CompletedQuizz() {
     }
 
     public Long getId() {
@@ -26,12 +26,12 @@ public class CompletedQuizzes {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Long getQuizId() {

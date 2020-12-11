@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pl.brzezinski.web_quiz_service.model.Answer;
+import pl.brzezinski.web_quiz_service.model.CompletedQuizz;
 import pl.brzezinski.web_quiz_service.model.Feedback;
 import pl.brzezinski.web_quiz_service.model.Quiz;
 import pl.brzezinski.web_quiz_service.service.QuizService;
@@ -53,16 +54,20 @@ public class QuizController {
     }
 
     @PostMapping(path = "quizzes/{id}/solve")
-    public Feedback solveQuiz(@RequestBody Answer userInput, @PathVariable long id) {
+    public Feedback solveQuiz(@RequestBody Answer userInput, @PathVariable long id, Principal principal) {
         Feedback feedback;
-        Quiz quizToSolve = quizService.getQuizById(id);
+        Quiz quiz = quizService.getQuizById(id);
 
-        if (quizToSolve != null) {
-            if (quizService.isQuizSolved(userInput, quizToSolve)) {
+        if (quiz != null) {
+            boolean isCorrect;
+            if (quizService.isQuizSolved(userInput, quiz)) {
                 feedback = new Feedback(true, "Congratulations, you're right!");
+                isCorrect = true;
             } else {
                 feedback = new Feedback(false, "Wrong answer! Please, try again.");
+                isCorrect = false;
             }
+            quizService.saveCompletedQuiz(quiz.getId(), principal.getName(), isCorrect);
         } else {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "(Not found)"
