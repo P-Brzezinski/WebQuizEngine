@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import pl.brzezinski.web_quiz_service.db.QuizRepository;
 import pl.brzezinski.web_quiz_service.db.UserRepository;
 import pl.brzezinski.web_quiz_service.model.Answer;
-import pl.brzezinski.web_quiz_service.model.Feedback;
 import pl.brzezinski.web_quiz_service.model.Quiz;
 
 import org.springframework.data.domain.Pageable;
@@ -37,7 +36,6 @@ public class QuizService {
     public Quiz getQuizById(long id) {
         return quizRepository.findById(id);
     }
-
 
     public Iterable<Quiz> getAllQuizzes(Integer pageNo, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));

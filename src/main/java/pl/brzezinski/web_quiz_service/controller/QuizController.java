@@ -6,7 +6,6 @@ import org.springframework.web.server.ResponseStatusException;
 import pl.brzezinski.web_quiz_service.model.Answer;
 import pl.brzezinski.web_quiz_service.model.Feedback;
 import pl.brzezinski.web_quiz_service.model.Quiz;
-import pl.brzezinski.web_quiz_service.model.User;
 import pl.brzezinski.web_quiz_service.service.QuizService;
 
 import javax.validation.Valid;
