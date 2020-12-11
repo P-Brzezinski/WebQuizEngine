@@ -48,9 +48,12 @@ public class QuizController {
     }
 
     @GetMapping(path = "quizzes/completed")
-    public void getAllCompletedQuizzes(Principal principal){
-//        User user =
-
+    public Iterable<CompletedQuizz> getAllCompletedQuizzes(
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "completedAt") String sortBy,
+            Principal principal) {
+        return quizService.getAllCompletedQuizzes(principal.getName(), pageNo, pageSize, sortBy);
     }
 
     @PostMapping(path = "quizzes/{id}/solve")

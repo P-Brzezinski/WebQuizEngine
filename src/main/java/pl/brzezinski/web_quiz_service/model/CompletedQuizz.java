@@ -13,7 +13,7 @@ public class CompletedQuizz {
     private Long quizId;
     private String userName;
     private LocalDateTime completedAt;
-    private boolean isCorrect;
+    private boolean successful;
 
     public CompletedQuizz() {
     }
@@ -50,11 +50,11 @@ public class CompletedQuizz {
         this.completedAt = completedAt;
     }
 
-    public boolean isCorrect() {
-        return isCorrect;
+    public boolean isSuccessful() {
+        return successful;
     }
 
-    public void setCorrect(boolean correct) {
-        isCorrect = correct;
+    public void setSuccessful(boolean successfull) {
+        this.successful = successfull;
     }
 }
