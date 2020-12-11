@@ -1,6 +1,7 @@
 package pl.brzezinski.web_quiz_service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -42,14 +43,14 @@ public class QuizService {
         return quizRepository.findById(id);
     }
 
-    public Iterable<Quiz> getAllQuizzes(Integer pageNo, Integer pageSize, String sortBy) {
+    public Page<Quiz> getAllQuizzes(Integer pageNo, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         return quizRepository.findAll(paging);
     }
 
-    public Iterable<CompletedQuizz> getAllCompletedQuizzes(String userName, Integer pageNo, Integer pageSize, String sortBy) {
+    public Page<CompletedQuizz> getAllCompletedQuizzes(String userName, Integer pageNo, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
-        return completedQuizzesRepository.getAllByUserNameAndSuccessfulTrue(userName, paging);
+        return completedQuizzesRepository.findByUserName(userName, paging);
     }
 
     public boolean isQuizSolved(Answer userInput, Quiz quiz) {

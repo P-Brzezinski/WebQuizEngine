@@ -54,7 +54,7 @@ public class CompletedQuizz {
         return successful;
     }
 
-    public void setSuccessful(boolean successfull) {
-        this.successful = successfull;
+    public void setSuccessful(boolean successful) {
+        this.successful = successful;
     }
 }

@@ -1,5 +1,6 @@
 package pl.brzezinski.web_quiz_service.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -40,7 +41,7 @@ public class QuizController {
     }
 
     @GetMapping(path = "quizzes")
-    public Iterable<Quiz> getAllQuizzes(
+    public Page<Quiz> getAllQuizzes(
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(defaultValue = "id") String sortBy) {
@@ -48,7 +49,7 @@ public class QuizController {
     }
 
     @GetMapping(path = "quizzes/completed")
-    public Iterable<CompletedQuizz> getAllCompletedQuizzes(
+    public Page<CompletedQuizz> getAllCompletedQuizzes(
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(defaultValue = "completedAt") String sortBy,
