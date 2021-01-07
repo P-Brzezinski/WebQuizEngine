@@ -5,10 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.Instant;
 import java.util.List;
 
@@ -23,15 +20,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "User name is required")
+    @Column(unique = true)
+    @NotBlank(message = "Username is required")
     private String userName;
 
     @Email(regexp = ".+\\..+")
-    @Column(unique = true)
-    @NotBlank(message = "Email is required")
+    @NotEmpty(message = "Email is required")
     private String email;
 
-    @NotEmpty(message = "Password is required")
+    @NotBlank(message = "Password is required")
     @Size(min = 5, message = "At least 5 characters are required")
     private String password;
 
