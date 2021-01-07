@@ -3,17 +3,21 @@ package pl.brzezinski.web_quiz_service.service;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.brzezinski.web_quiz_service.db.UserRepository;
 import pl.brzezinski.web_quiz_service.db.VerificationTokenRepository;
+import pl.brzezinski.web_quiz_service.dto.AuthenticationResponse;
 import pl.brzezinski.web_quiz_service.dto.LoginRequest;
 import pl.brzezinski.web_quiz_service.dto.RegisterRequest;
 import pl.brzezinski.web_quiz_service.exceptions.WebQuizException;
 import pl.brzezinski.web_quiz_service.model.NotificationEmail;
 import pl.brzezinski.web_quiz_service.model.User;
 import pl.brzezinski.web_quiz_service.model.VerificationToken;
+import pl.brzezinski.web_quiz_service.security.JwtProvider;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -28,6 +32,7 @@ public class AuthService {
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
     @Transactional
     public void signUp(RegisterRequest registerRequest) {
@@ -72,7 +77,10 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public void login(LoginRequest loginRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
+    public AuthenticationResponse login(LoginRequest loginRequest) {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String token = jwtProvider.generateToken(authenticate);
+        return new AuthenticationResponse(token, loginRequest.getUserName());
     }
 }
