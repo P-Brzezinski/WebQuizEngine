@@ -1,11 +1,14 @@
 package pl.brzezinski.web_quiz_service.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.brzezinski.web_quiz_service.db.UserRepository;
 import pl.brzezinski.web_quiz_service.db.VerificationTokenRepository;
+import pl.brzezinski.web_quiz_service.dto.LoginRequest;
 import pl.brzezinski.web_quiz_service.dto.RegisterRequest;
 import pl.brzezinski.web_quiz_service.exceptions.WebQuizException;
 import pl.brzezinski.web_quiz_service.model.NotificationEmail;
@@ -24,6 +27,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailService mailService;
+    private final AuthenticationManager authenticationManager;
 
     @Transactional
     public void signUp(RegisterRequest registerRequest) {
@@ -66,5 +70,9 @@ public class AuthService {
         User user = userRepository.findByUserName(userName).orElseThrow(()->new WebQuizException("User with name " + userName + "not found"));
         user.setEnabled(true);
         userRepository.save(user);
+    }
+
+    public void login(LoginRequest loginRequest) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
     }
 }
