@@ -7,11 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.brzezinski.web_quiz_service.db.UserRepository;
 import pl.brzezinski.web_quiz_service.db.VerificationTokenRepository;
 import pl.brzezinski.web_quiz_service.dto.RegisterRequest;
+import pl.brzezinski.web_quiz_service.exceptions.WebQuizException;
 import pl.brzezinski.web_quiz_service.model.NotificationEmail;
 import pl.brzezinski.web_quiz_service.model.User;
 import pl.brzezinski.web_quiz_service.model.VerificationToken;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -52,4 +54,17 @@ public class AuthService {
         return token;
     }
 
+    public void verifyAccount(String token) {
+        Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
+        verificationToken.orElseThrow(() -> new WebQuizException("Invalid token"));
+        fetchUserAndEnable(verificationToken.get());
+    }
+
+    @Transactional
+    public void fetchUserAndEnable(VerificationToken verificationToken) {
+        String userName = verificationToken.getUser().getUserName();
+        User user = userRepository.findByUserName(userName).orElseThrow(()->new WebQuizException("User with name " + userName + "not found"));
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
 }
