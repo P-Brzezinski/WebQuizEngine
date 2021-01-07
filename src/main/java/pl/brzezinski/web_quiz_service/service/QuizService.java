@@ -1,51 +1,71 @@
 package pl.brzezinski.web_quiz_service.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.brzezinski.web_quiz_service.db.CompletedQuizzesRepository;
 import pl.brzezinski.web_quiz_service.db.QuizRepository;
 import pl.brzezinski.web_quiz_service.db.UserRepository;
+import pl.brzezinski.web_quiz_service.dto.QuizDto;
 import pl.brzezinski.web_quiz_service.model.Answer;
 import pl.brzezinski.web_quiz_service.model.CompletedQuizz;
 import pl.brzezinski.web_quiz_service.model.Quiz;
 
 import org.springframework.data.domain.Pageable;
-import pl.brzezinski.web_quiz_service.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Data
+@AllArgsConstructor
 public class QuizService {
 
     private QuizRepository quizRepository;
     private UserRepository userRepository;
     private CompletedQuizzesRepository completedQuizzesRepository;
 
-    @Autowired
-    public QuizService(QuizRepository quizRepository, UserRepository userRepository, CompletedQuizzesRepository completedQuizzesRepository) {
-        this.quizRepository = quizRepository;
-        this.userRepository = userRepository;
-        this.completedQuizzesRepository = completedQuizzesRepository;
+    @Transactional
+    public QuizDto save(QuizDto quizDto) {
+        Quiz quiz = quizRepository.save(mapQuizDto(quizDto));
+        quizDto.setId(quiz.getId());
+        return quizDto;
     }
 
-    public Quiz saveNewQuiz(Quiz quiz, String userName) {
-        User user = userRepository.findByEmail(userName);
-        quiz.setUser(user);
-        quizRepository.save(quiz);
-        return quiz;
+    private Quiz mapQuizDto(QuizDto quizDto) {
+        return Quiz.builder()
+                .title(quizDto.getTitle())
+                .text(quizDto.getText())
+                .options(quizDto.getOptions())
+                .answer(quizDto.getAnswer())
+                .build();
     }
 
     public Quiz getQuizById(long id) {
         return quizRepository.findById(id);
     }
 
-    public Page<Quiz> getAllQuizzes(Integer pageNo, Integer pageSize, String sortBy) {
+    @Transactional(readOnly = true)
+    public List<QuizDto> getAllQuizzes(Integer pageNo, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        return quizRepository.findAll(paging);
+        return quizRepository.findAll(paging)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    private QuizDto mapToDto(Quiz quiz) {
+        return QuizDto.builder()
+                .title(quiz.getTitle())
+                .text(quiz.getText())
+                .options(quiz.getOptions())
+                .answer(quiz.getAnswer())
+                .build();
     }
 
     public Page<CompletedQuizz> getAllCompletedQuizzes(String userName, Integer pageNo, Integer pageSize, String sortBy) {

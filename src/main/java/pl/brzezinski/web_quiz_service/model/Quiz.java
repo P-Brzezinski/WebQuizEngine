@@ -1,6 +1,10 @@
 package pl.brzezinski.web_quiz_service.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -10,6 +14,10 @@ import java.util.*;
 
 @Entity
 @Table(name = "quizzes")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Quiz {
 
     @Id
@@ -38,41 +46,6 @@ public class Quiz {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Quiz() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public List<String> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<String> options) {
-        this.options = options;
-    }
-
     public List<Integer> getAnswer() {
         List<Integer> x = null;
         if (Objects.equals(x, answer)) {
@@ -85,13 +58,5 @@ public class Quiz {
     public void setAnswer(List<Integer> answer) {
         Collections.sort(answer);
         this.answer = answer;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User owner) {
-        this.user = owner;
     }
 }

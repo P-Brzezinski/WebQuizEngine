@@ -1,9 +1,13 @@
 package pl.brzezinski.web_quiz_service.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import pl.brzezinski.web_quiz_service.dto.QuizDto;
 import pl.brzezinski.web_quiz_service.model.Answer;
 import pl.brzezinski.web_quiz_service.model.CompletedQuizz;
 import pl.brzezinski.web_quiz_service.model.Feedback;
@@ -15,21 +19,19 @@ import java.security.Principal;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/quizzes")
+@AllArgsConstructor
+@Slf4j
 public class QuizController {
 
     private QuizService quizService;
 
-    public QuizController(QuizService quizService) {
-        this.quizService = quizService;
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<QuizDto> createNewQuiz(@Valid @RequestBody QuizDto quizDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(quizService.save(quizDto));
     }
 
-    @PostMapping(path = "quizzes", consumes = "application/json")
-    public Quiz saveNewQuiz(@Valid @RequestBody Quiz newQuiz, Principal principal) {
-        return quizService.saveNewQuiz(newQuiz, principal.getName());
-    }
-
-    @GetMapping(path = "quizzes/{id}")
+    @GetMapping(path = "{id}")
     public Quiz getQuizById(@PathVariable long id) {
         Quiz quiz = quizService.getQuizById(id);
         if (quiz == null) {
@@ -40,12 +42,12 @@ public class QuizController {
         return quiz;
     }
 
-    @GetMapping(path = "quizzes")
-    public Page<Quiz> getAllQuizzes(
+    @GetMapping()
+    public ResponseEntity<List<QuizDto>> getAllQuizzes(
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(defaultValue = "id") String sortBy) {
-        return quizService.getAllQuizzes(pageNo, pageSize, sortBy);
+        return ResponseEntity.status(HttpStatus.OK).body(quizService.getAllQuizzes(pageNo, pageSize, sortBy));
     }
 
     @GetMapping(path = "quizzes/completed")
