@@ -42,7 +42,7 @@ public class QuizController {
         return quiz;
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<QuizDto>> getAllQuizzes(
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize,

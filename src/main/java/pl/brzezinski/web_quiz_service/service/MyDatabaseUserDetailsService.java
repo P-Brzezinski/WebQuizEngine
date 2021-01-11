@@ -22,11 +22,11 @@ public class MyDatabaseUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> userOptional = userRepository.findByUserName(username);
-        User user = userOptional.orElseThrow(() -> new UsernameNotFoundException("User " + username + " not found."));
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        Optional<User> userOptional = userRepository.findByUserName(userName);
+        User user = userOptional.orElseThrow(() -> new UsernameNotFoundException("User " + userName + " not found."));
 
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), Arrays.asList(new SimpleGrantedAuthority("USER")));
+        return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(), Arrays.asList(new SimpleGrantedAuthority("USER")));
     }
 }
 
